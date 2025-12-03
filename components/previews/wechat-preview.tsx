@@ -3,6 +3,10 @@
 import type { ChatType, Participant, Message } from "../chat-mockup-generator"
 
 interface WeChatPreviewProps {
+  groupChatName: string
+  groupChatImage: string | null
+  groupChatName: string
+  groupChatImage: string | null
   chatType: ChatType
   participants: Participant[]
   messages: Message[]
@@ -43,12 +47,9 @@ export function WeChatPreview({ participants, messages }: WeChatPreviewProps) {
 
       {/* Input */}
       <div className="p-3 bg-[#f5f5f5] border-t border-[#d9d9d9]">
-        <input
-          type="text"
-          placeholder="Enter message..."
-          className="w-full bg-white rounded px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none border border-[#e5e5e5]"
-          readOnly
-        />
+        <div className="w-full bg-white rounded px-3 py-2 text-sm text-gray-400 border border-[#e5e5e5]">
+          Enter message...
+        </div>
       </div>
     </div>
   )

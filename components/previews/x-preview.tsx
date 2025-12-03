@@ -3,6 +3,10 @@
 import type { ChatType, Participant, Message } from "../chat-mockup-generator"
 
 interface XPreviewProps {
+  groupChatName: string
+  groupChatImage: string | null
+  groupChatName: string
+  groupChatImage: string | null
   chatType: ChatType
   participants: Participant[]
   messages: Message[]
@@ -47,12 +51,9 @@ export function XPreview({ participants, messages }: XPreviewProps) {
 
       {/* Input */}
       <div className="p-3 border-t border-[#2f3336]">
-        <input
-          type="text"
-          placeholder="Start a new message"
-          className="w-full bg-transparent border border-[#2f3336] rounded-full px-4 py-2.5 text-sm placeholder:text-[#71767b] focus:outline-none focus:border-[#1d9bf0]"
-          readOnly
-        />
+        <div className="w-full bg-transparent border border-[#2f3336] rounded-full px-4 py-2.5 text-sm text-[#71767b]">
+          Start a new message
+        </div>
       </div>
     </div>
   )

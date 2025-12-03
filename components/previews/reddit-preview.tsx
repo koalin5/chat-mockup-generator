@@ -3,6 +3,10 @@
 import type { ChatType, Participant, Message } from "../chat-mockup-generator"
 
 interface RedditPreviewProps {
+  groupChatName: string
+  groupChatImage: string | null
+  groupChatName: string
+  groupChatImage: string | null
   chatType: ChatType
   participants: Participant[]
   messages: Message[]
@@ -59,12 +63,9 @@ export function RedditPreview({ participants, messages }: RedditPreviewProps) {
 
       {/* Input */}
       <div className="p-3 border-t border-[#343536]">
-        <input
-          type="text"
-          placeholder="Message"
-          className="w-full bg-[#272729] border border-[#343536] rounded-full px-4 py-2.5 text-sm placeholder:text-[#818384] focus:outline-none focus:border-[#d7dadc]"
-          readOnly
-        />
+        <div className="w-full bg-[#272729] border border-[#343536] rounded-full px-4 py-2.5 text-sm text-[#818384]">
+          Message
+        </div>
       </div>
     </div>
   )

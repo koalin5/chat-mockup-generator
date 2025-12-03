@@ -3,6 +3,10 @@
 import type { ChatType, Participant, Message } from "../chat-mockup-generator"
 
 interface TikTokPreviewProps {
+  groupChatName: string
+  groupChatImage: string | null
+  groupChatName: string
+  groupChatImage: string | null
   chatType: ChatType
   participants: Participant[]
   messages: Message[]
@@ -49,12 +53,9 @@ export function TikTokPreview({ participants, messages }: TikTokPreviewProps) {
       {/* Input */}
       <div className="p-3 border-t border-[#2f2f2f]">
         <div className="flex items-center gap-2">
-          <input
-            type="text"
-            placeholder="Send a message..."
-            className="flex-1 bg-[#2f2f2f] rounded-full px-4 py-2.5 text-sm placeholder:text-gray-500 focus:outline-none"
-            readOnly
-          />
+          <div className="flex-1 bg-[#2f2f2f] rounded-full px-4 py-2.5 text-sm text-gray-500">
+            Send a message...
+          </div>
         </div>
       </div>
     </div>

@@ -5,12 +5,15 @@ import { Phone, Video, Info } from "lucide-react"
 
 interface MessengerPreviewProps {
   chatType: ChatType
+  groupChatName: string
+  groupChatImage: string | null
   participants: Participant[]
   messages: Message[]
 }
 
-export function MessengerPreview({ participants, messages }: MessengerPreviewProps) {
+export function MessengerPreview({ chatType, groupChatName, groupChatImage, participants, messages }: MessengerPreviewProps) {
   const other = participants.find((p) => p.id === "receiver")
+  const others = participants.filter((p) => p.id !== "sender")
   const you = participants.find((p) => p.id === "sender")
 
   return (
@@ -22,16 +25,39 @@ export function MessengerPreview({ participants, messages }: MessengerPreviewPro
             <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
           </svg>
         </button>
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0084FF] to-[#00C6FF] flex items-center justify-center overflow-hidden">
-          {other?.avatar ? (
-            <img src={other.avatar || "/placeholder.svg"} alt="" className="w-full h-full object-cover" />
-          ) : (
-            <span className="text-white text-sm font-semibold">{other?.name?.[0]?.toUpperCase() || "?"}</span>
-          )}
-        </div>
-        <div className="flex-1">
-          <p className="font-semibold text-sm text-gray-900">{other?.name || "User"}</p>
-          <p className="text-xs text-gray-500">Active now</p>
+        {chatType === "group" ? (
+          <div className="flex -space-x-2">
+            {others.slice(0, 3).map((p, i) => (
+              <div
+                key={p.id}
+                className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0084FF] to-[#00C6FF] flex items-center justify-center overflow-hidden border-2 border-white"
+              >
+                {p.avatar ? (
+                  <img src={p.avatar || "/placeholder.svg"} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-white text-sm font-semibold">{p.name?.[0]?.toUpperCase() || "?"}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0084FF] to-[#00C6FF] flex items-center justify-center overflow-hidden">
+            {other?.avatar ? (
+              <img src={other.avatar || "/placeholder.svg"} alt="" className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-white text-sm font-semibold">{other?.name?.[0]?.toUpperCase() || "?"}</span>
+            )}
+          </div>
+        )}
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-sm text-gray-900 truncate">
+            {chatType === "group" ? (groupChatName || "Group Chat") : (other?.name || "User")}
+          </p>
+          <p className="text-xs text-gray-500 truncate">
+            {chatType === "group"
+              ? others.map(p => p.name || "Unknown").filter(Boolean).join(", ")
+              : "Active now"}
+          </p>
         </div>
         <div className="flex items-center gap-4">
           <Phone className="w-5 h-5 text-[#0084FF]" />
@@ -69,6 +95,9 @@ export function MessengerPreview({ participants, messages }: MessengerPreviewPro
                   isYou ? "bg-[#0084FF] text-white" : "bg-gray-100 text-gray-900"
                 }`}
               >
+                {!isYou && chatType === "group" && (
+                  <p className="text-xs font-semibold mb-1 opacity-70">{sender?.name || "Unknown"}</p>
+                )}
                 <p className="text-sm">{msg.content}</p>
               </div>
             </div>

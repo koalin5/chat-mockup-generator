@@ -3,6 +3,10 @@
 import type { ChatType, Participant, Message } from "../chat-mockup-generator"
 
 interface SnapchatPreviewProps {
+  groupChatName: string
+  groupChatImage: string | null
+  groupChatName: string
+  groupChatImage: string | null
   chatType: ChatType
   participants: Participant[]
   messages: Message[]
@@ -49,12 +53,9 @@ export function SnapchatPreview({ participants, messages }: SnapchatPreviewProps
       {/* Input */}
       <div className="p-3 bg-white border-t border-gray-100">
         <div className="flex items-center gap-2">
-          <input
-            type="text"
-            placeholder="Send a chat"
-            className="flex-1 bg-gray-100 rounded-full px-4 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none"
-            readOnly
-          />
+          <div className="flex-1 bg-gray-100 rounded-full px-4 py-2.5 text-sm text-gray-400">
+            Send a chat
+          </div>
           <button className="w-10 h-10 rounded-full bg-[#fffc00] flex items-center justify-center">
             <span className="text-black font-bold text-lg">→</span>
           </button>

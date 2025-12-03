@@ -4,19 +4,24 @@ import type { ChatType, Participant, Message } from "../chat-mockup-generator"
 
 interface SlackPreviewProps {
   chatType: ChatType
+  groupChatName: string
+  groupChatImage: string | null
   participants: Participant[]
   messages: Message[]
 }
 
-export function SlackPreview({ participants, messages }: SlackPreviewProps) {
+export function SlackPreview({ chatType, groupChatName, groupChatImage, participants, messages }: SlackPreviewProps) {
   const receiver = participants.find((p) => p.id === "receiver")
   const sender = participants.find((p) => p.id === "sender")
+  const channelName = chatType === "group"
+    ? (groupChatName || "general").toLowerCase().replace(/\s+/g, "-")
+    : (receiver?.name || "general").toLowerCase().replace(/\s+/g, "-")
 
   return (
     <div className="h-full flex flex-col bg-white text-[#1d1c1d]">
       {/* Header */}
       <div className="flex items-center gap-2 p-3 border-b border-[#e1e1e1]">
-        <span className="text-lg font-bold">#{receiver?.name?.toLowerCase().replace(/\s+/g, "-") || "general"}</span>
+        <span className="text-lg font-bold">#{channelName}</span>
       </div>
 
       {/* Messages */}
@@ -49,12 +54,9 @@ export function SlackPreview({ participants, messages }: SlackPreviewProps) {
       {/* Input */}
       <div className="p-3 border-t border-[#e1e1e1]">
         <div className="border border-[#868686] rounded-lg px-3 py-2">
-          <input
-            type="text"
-            placeholder={`Message #${receiver?.name?.toLowerCase().replace(/\s+/g, "-") || "general"}`}
-            className="w-full text-sm placeholder:text-[#868686] focus:outline-none"
-            readOnly
-          />
+          <div className="w-full text-sm text-[#868686]">
+            Message #{channelName}
+          </div>
         </div>
       </div>
     </div>

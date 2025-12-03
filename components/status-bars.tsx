@@ -2,12 +2,12 @@
 
 // iPhone Status Bar with Dynamic Island
 export function IPhoneStatusBar({ isDark = false }: { isDark?: boolean }) {
-  const bgColor = isDark ? "#000000" : "#F6F6F6"
+  const bgColor = isDark ? "#000000" : "#FFFFFF"
   const textColor = isDark ? "#FFFFFF" : "#000000"
 
   return (
     <div
-      className="w-full h-[54px] flex items-center justify-between px-6 relative"
+      className="w-full h-[54px] flex items-center justify-between px-6 relative flex-shrink-0"
       style={{ backgroundColor: bgColor }}
     >
       {/* Time */}
@@ -27,32 +27,41 @@ export function IPhoneStatusBar({ isDark = false }: { isDark?: boolean }) {
       </div>
 
       {/* Right icons */}
-      <div className="flex items-center gap-1 z-10">
-        {/* Signal bars */}
-        <svg width="18" height="12" viewBox="0 0 18 12" fill="none">
-          <rect x="0" y="8" width="3" height="4" rx="0.5" fill={textColor} />
-          <rect x="4" y="5" width="3" height="7" rx="0.5" fill={textColor} />
-          <rect x="8" y="2" width="3" height="10" rx="0.5" fill={textColor} />
-          <rect x="12" y="0" width="3" height="12" rx="0.5" fill={textColor} />
+      <div className="flex items-center gap-[6px] z-10">
+        {/* Signal bars - thinner and more refined */}
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="none">
+          <circle cx="1.5" cy="9.5" r="1.5" fill={textColor} />
+          <circle cx="5.5" cy="7.5" r="1.5" fill={textColor} />
+          <circle cx="9.5" cy="5.5" r="1.5" fill={textColor} />
+          <circle cx="13.5" cy="3.5" r="1.5" fill={textColor} />
+          <circle cx="13.5" cy="9.5" r="1.5" fill={textColor} opacity="0.4" />
         </svg>
 
-        {/* WiFi */}
-        <svg width="17" height="12" viewBox="0 0 17 12" fill="none" className="ml-1">
+        {/* WiFi - cleaner design */}
+        <svg width="15" height="11" viewBox="0 0 15 11" fill="none">
           <path
-            d="M8.5 2.5C5.5 2.5 2.8 3.7 1 5.7L2.4 7.1C3.9 5.5 6 4.5 8.5 4.5C11 4.5 13.1 5.5 14.6 7.1L16 5.7C14.2 3.7 11.5 2.5 8.5 2.5ZM8.5 6.5C6.8 6.5 5.3 7.2 4.2 8.3L5.6 9.7C6.4 8.9 7.4 8.5 8.5 8.5C9.6 8.5 10.6 8.9 11.4 9.7L12.8 8.3C11.7 7.2 10.2 6.5 8.5 6.5ZM8.5 10.5C7.7 10.5 7 11.2 7 12H10C10 11.2 9.3 10.5 8.5 10.5Z"
+            d="M7.5 10C8.05228 10 8.5 10.4477 8.5 11H6.5C6.5 10.4477 6.94772 10 7.5 10Z"
+            fill={textColor}
+          />
+          <path
+            d="M7.5 7C8.88071 7 10.1872 7.52678 11.1872 8.40192L10.1872 9.40192C9.46407 8.77232 8.52513 8.4 7.5 8.4C6.47487 8.4 5.53593 8.77232 4.81282 9.40192L3.81282 8.40192C4.81282 7.52678 6.11929 7 7.5 7Z"
+            fill={textColor}
+          />
+          <path
+            d="M7.5 4C9.75163 4 11.8258 4.89553 13.3258 6.35553L12.3258 7.35553C11.1026 6.15232 9.38802 5.4 7.5 5.4C5.61198 5.4 3.89738 6.15232 2.67417 7.35553L1.67417 6.35553C3.17417 4.89553 5.24837 4 7.5 4Z"
             fill={textColor}
           />
         </svg>
 
-        {/* Battery */}
-        <div className="flex items-center ml-1">
-          <div className="w-[25px] h-[12px] rounded-[3px] border-[1.5px] relative" style={{ borderColor: textColor }}>
+        {/* Battery - more compact and realistic */}
+        <div className="flex items-center gap-[1px]">
+          <div className="w-[22px] h-[11px] rounded-[2.5px] border-[1px] relative flex items-center justify-center" style={{ borderColor: textColor, opacity: 0.35 }}>
             <div
-              className="absolute left-[2px] top-[2px] bottom-[2px] w-[18px] rounded-[1px]"
+              className="w-[18px] h-[7px] rounded-[1.5px]"
               style={{ backgroundColor: textColor }}
             />
           </div>
-          <div className="w-[2px] h-[5px] rounded-r-sm ml-[1px]" style={{ backgroundColor: textColor }} />
+          <div className="w-[1.5px] h-[4px] rounded-r-[1px]" style={{ backgroundColor: textColor, opacity: 0.4 }} />
         </div>
       </div>
     </div>
@@ -66,7 +75,7 @@ export function AndroidStatusBar({ isDark = false }: { isDark?: boolean }) {
 
   return (
     <div
-      className="w-full h-[40px] flex items-center justify-between px-5 relative rounded-t-[20px]"
+      className="w-full h-[40px] flex items-center justify-between px-5 relative flex-shrink-0"
       style={{ backgroundColor: bgColor }}
     >
       {/* Time */}
@@ -80,30 +89,26 @@ export function AndroidStatusBar({ isDark = false }: { isDark?: boolean }) {
       </div>
 
       {/* Right icons */}
-      <div className="flex items-center gap-1.5 z-10">
-        {/* Network type / WiFi */}
-        <svg width="16" height="13" viewBox="0 0 16 13" fill="none">
-          <path
-            d="M8 0C4.5 0 1.4 1.4 0 3.7L1.3 5C2.5 3.2 5 1.8 8 1.8C11 1.8 13.5 3.2 14.7 5L16 3.7C14.6 1.4 11.5 0 8 0ZM8 4C5.8 4 3.9 4.9 2.7 6.3L4 7.6C4.9 6.6 6.4 5.8 8 5.8C9.6 5.8 11.1 6.6 12 7.6L13.3 6.3C12.1 4.9 10.2 4 8 4ZM8 8C6.9 8 5.9 8.5 5.3 9.3L8 12L10.7 9.3C10.1 8.5 9.1 8 8 8Z"
-            fill={textColor}
-          />
+      <div className="flex items-center gap-[5px] z-10">
+        {/* WiFi icon */}
+        <svg width="17" height="13" viewBox="0 0 17 13" fill="none">
+          <path d="M8.5 10.5C9.05 10.5 9.5 10.95 9.5 11.5C9.5 12.05 9.05 12.5 8.5 12.5C7.95 12.5 7.5 12.05 7.5 11.5C7.5 10.95 7.95 10.5 8.5 10.5ZM8.5 7C10.16 7 11.69 7.63 12.84 8.67L11.77 9.74C10.91 8.99 9.76 8.5 8.5 8.5C7.24 8.5 6.09 8.99 5.23 9.74L4.16 8.67C5.31 7.63 6.84 7 8.5 7ZM8.5 3.5C11.03 3.5 13.35 4.46 15.13 6.08L14.06 7.15C12.58 5.84 10.63 5 8.5 5C6.37 5 4.42 5.84 2.94 7.15L1.87 6.08C3.65 4.46 5.97 3.5 8.5 3.5ZM8.5 0C11.93 0 15.06 1.34 17.37 3.51L16.3 4.58C14.29 2.71 11.54 1.5 8.5 1.5C5.46 1.5 2.71 2.71 0.7 4.58L-0.37 3.51C1.94 1.34 5.07 0 8.5 0Z" fill={textColor}/>
         </svg>
 
-        {/* Signal strength */}
-        <svg width="16" height="13" viewBox="0 0 16 13" fill="none">
-          <path d="M0 13H3V6H0V13ZM4.5 13H7.5V3H4.5V13ZM9 13H12V0H9V13ZM13.5 13H16.5V4H13.5V13Z" fill={textColor} />
+        {/* Cellular signal icon - 4 bars */}
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+          <rect x="0" y="8" width="3" height="4" fill={textColor}/>
+          <rect x="4.5" y="5" width="3" height="7" fill={textColor}/>
+          <rect x="9" y="2" width="3" height="10" fill={textColor}/>
+          <rect x="13.5" y="0" width="3" height="12" fill={textColor}/>
         </svg>
 
-        {/* Battery */}
-        <div className="flex items-center">
-          <div className="w-[20px] h-[10px] rounded-[2px] border relative" style={{ borderColor: textColor }}>
-            <div
-              className="absolute left-[1px] top-[1px] bottom-[1px] w-[15px] rounded-[1px]"
-              style={{ backgroundColor: textColor }}
-            />
-          </div>
-          <div className="w-[2px] h-[4px] rounded-r-sm" style={{ backgroundColor: textColor }} />
-        </div>
+        {/* Battery icon */}
+        <svg width="24" height="12" viewBox="0 0 24 12" fill="none">
+          <rect x="0.5" y="0.5" width="19" height="11" rx="1.5" stroke={textColor} strokeOpacity="0.35"/>
+          <rect x="2" y="2" width="16" height="8" rx="0.5" fill={textColor}/>
+          <path d="M21 3.5C21 3.22386 21.2239 3 21.5 3H22C22.8284 3 23.5 3.67157 23.5 4.5V7.5C23.5 8.32843 22.8284 9 22 9H21.5C21.2239 9 21 8.77614 21 8.5V3.5Z" fill={textColor} fillOpacity="0.4"/>
+        </svg>
       </div>
     </div>
   )

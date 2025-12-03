@@ -5,33 +5,61 @@ import { Phone, Video, Info, ChevronLeft, Heart } from "lucide-react"
 
 interface InstagramPreviewProps {
   chatType: ChatType
+  groupChatName: string
+  groupChatImage: string | null
   participants: Participant[]
   messages: Message[]
 }
 
-export function InstagramPreview({ participants, messages }: InstagramPreviewProps) {
+export function InstagramPreview({ chatType, groupChatName, groupChatImage, participants, messages }: InstagramPreviewProps) {
   const other = participants.find((p) => p.id === "receiver")
+  const others = participants.filter((p) => p.id !== "sender")
 
   return (
     <div className="h-full flex flex-col bg-black">
       {/* Header - Instagram DM style */}
       <div className="bg-black px-4 py-3 flex items-center gap-3 border-b border-gray-800">
         <ChevronLeft className="w-6 h-6 text-white" />
-        <div className="relative">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#F58529] via-[#DD2A7B] to-[#8134AF] p-[2px]">
-            <div className="w-full h-full rounded-full bg-black flex items-center justify-center overflow-hidden">
-              {other?.avatar ? (
-                <img src={other.avatar || "/placeholder.svg"} alt="" className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-white text-xs font-semibold">{other?.name?.[0]?.toUpperCase() || "?"}</span>
-              )}
-            </div>
+        {chatType === "group" ? (
+          <div className="flex -space-x-2">
+            {others.slice(0, 3).map((p) => (
+              <div
+                key={p.id}
+                className="w-9 h-9 rounded-full bg-gradient-to-br from-[#F58529] via-[#DD2A7B] to-[#8134AF] p-[2px] border-2 border-black"
+              >
+                <div className="w-full h-full rounded-full bg-black flex items-center justify-center overflow-hidden">
+                  {p.avatar ? (
+                    <img src={p.avatar || "/placeholder.svg"} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-white text-xs font-semibold">{p.name?.[0]?.toUpperCase() || "?"}</span>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
-          <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-black" />
-        </div>
-        <div className="flex-1">
-          <p className="font-semibold text-sm text-white">{other?.name || "User"}</p>
-          <p className="text-xs text-gray-400">Active now</p>
+        ) : (
+          <div className="relative">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#F58529] via-[#DD2A7B] to-[#8134AF] p-[2px]">
+              <div className="w-full h-full rounded-full bg-black flex items-center justify-center overflow-hidden">
+                {other?.avatar ? (
+                  <img src={other.avatar || "/placeholder.svg"} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-white text-xs font-semibold">{other?.name?.[0]?.toUpperCase() || "?"}</span>
+                )}
+              </div>
+            </div>
+            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-black" />
+          </div>
+        )}
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-sm text-white truncate">
+            {chatType === "group" ? (groupChatName || "Group Chat") : (other?.name || "User")}
+          </p>
+          <p className="text-xs text-gray-400 truncate">
+            {chatType === "group"
+              ? others.map(p => p.name || "Unknown").filter(Boolean).join(", ")
+              : "Active now"}
+          </p>
         </div>
         <div className="flex items-center gap-5">
           <Phone className="w-5 h-5 text-white" />
@@ -71,6 +99,9 @@ export function InstagramPreview({ participants, messages }: InstagramPreviewPro
                     : "bg-gray-800 text-white"
                 }`}
               >
+                {!isYou && chatType === "group" && (
+                  <p className="text-xs font-semibold mb-1 opacity-70">{sender?.name || "Unknown"}</p>
+                )}
                 <p className="text-sm">{msg.content}</p>
               </div>
             </div>

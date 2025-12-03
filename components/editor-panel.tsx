@@ -66,6 +66,10 @@ interface EditorPanelProps {
   setPlatform: (platform: Platform) => void
   chatType: ChatType
   setChatType: (type: ChatType) => void
+  groupChatName: string
+  setGroupChatName: (name: string) => void
+  groupChatImage: string | null
+  setGroupChatImage: (image: string | null) => void
   participants: Participant[]
   updateParticipant: (id: string, updates: Partial<Participant>) => void
   addParticipant: () => void
@@ -76,6 +80,9 @@ interface EditorPanelProps {
   deleteMessage: (id: string) => void
   reorderMessages: (fromIndex: number, toIndex: number) => void
   updateMessageTimestamp: (id: string, timestamp: Date) => void
+  isExporting: boolean
+  setIsExporting: (isExporting: boolean) => void
+  setExportDeviceType: (deviceType: "iphone" | "android" | null) => void
   previewRef: RefObject<HTMLDivElement | null>
 }
 
@@ -84,6 +91,10 @@ export function EditorPanel({
   setPlatform,
   chatType,
   setChatType,
+  groupChatName,
+  setGroupChatName,
+  groupChatImage,
+  setGroupChatImage,
   participants,
   updateParticipant,
   addParticipant,
@@ -94,6 +105,9 @@ export function EditorPanel({
   deleteMessage,
   reorderMessages,
   updateMessageTimestamp,
+  isExporting,
+  setIsExporting,
+  setExportDeviceType,
   previewRef,
 }: EditorPanelProps) {
   const [newMessage, setNewMessage] = useState("")
@@ -101,8 +115,8 @@ export function EditorPanel({
   const [editingMessage, setEditingMessage] = useState<string | null>(null)
   const [editingContent, setEditingContent] = useState("")
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
-  const [isExporting, setIsExporting] = useState(false)
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({})
+  const groupImageInputRef = useRef<HTMLInputElement | null>(null)
 
   const handleAvatarUpload = (participantId: string, file: File) => {
     const reader = new FileReader()
@@ -179,78 +193,38 @@ export function EditorPanel({
   const handleExport = async (deviceType: "iphone" | "android") => {
     if (!previewRef.current) return
 
-    setIsExporting(true)
     try {
+      // Set export state (triggers status bar in preview)
+      setExportDeviceType(deviceType)
+      setIsExporting(true)
+
+      // Wait for React to render status bar and content
+      await new Promise((resolve) => setTimeout(resolve, 300))
+
       const previewElement = previewRef.current
+
+      // Capture with html2canvas at 3x scale
       const canvas = await html2canvas(previewElement, {
         backgroundColor: null,
-        scale: 2,
+        scale: 3, // 3x for better quality (1125px width)
         useCORS: true,
         allowTaint: true,
+        logging: false,
+        imageTimeout: 0,
       })
 
-      // Create a new canvas with status bar
-      const statusBarHeight = 44 * 2 // scaled
-      const finalCanvas = document.createElement("canvas")
-      finalCanvas.width = canvas.width
-      finalCanvas.height = canvas.height + statusBarHeight
-      const ctx = finalCanvas.getContext("2d")
-
-      if (ctx) {
-        const bgColor = isDarkPlatform ? "#000000" : "#ffffff"
-        const textColor = isDarkPlatform ? "#ffffff" : "#000000"
-
-        // Draw status bar background
-        ctx.fillStyle = bgColor
-        ctx.fillRect(0, 0, finalCanvas.width, statusBarHeight)
-
-        // Draw time
-        ctx.fillStyle = textColor
-        ctx.font = "bold 32px -apple-system, BlinkMacSystemFont, sans-serif"
-        ctx.textAlign = "left"
-        ctx.fillText("9:41", 48, 32)
-
-        // Draw signal bars
-        const signalX = finalCanvas.width - 140
-        for (let i = 0; i < 4; i++) {
-          ctx.fillStyle = textColor
-          ctx.fillRect(signalX + i * 12, 44 - 12 - i * 6, 8, 12 + i * 6)
-        }
-
-        // Draw battery
-        ctx.fillStyle = textColor
-        ctx.beginPath()
-        ctx.roundRect(finalCanvas.width - 60, 16, 44, 22, 4)
-        ctx.fill()
-
-        if (deviceType === "iphone") {
-          // Draw Dynamic Island
-          ctx.fillStyle = isDarkPlatform ? "#333333" : "#000000"
-          ctx.beginPath()
-          ctx.roundRect(finalCanvas.width / 2 - 60, 10, 120, 34, 17)
-          ctx.fill()
-        } else {
-          // Draw Android camera punch hole
-          ctx.fillStyle = isDarkPlatform ? "#333333" : "#000000"
-          ctx.beginPath()
-          ctx.arc(finalCanvas.width / 2, 26, 14, 0, Math.PI * 2)
-          ctx.fill()
-        }
-
-        // Draw the preview below status bar
-        ctx.drawImage(canvas, 0, statusBarHeight)
-      }
-
-      // Download
+      // Download directly
       const link = document.createElement("a")
       link.download = `chat-mockup-${platform}-${deviceType}.png`
-      link.href = finalCanvas.toDataURL("image/png")
+      link.href = canvas.toDataURL("image/png")
       link.click()
     } catch (error) {
       console.error("Failed to export:", error)
       alert(`Failed to export: ${error instanceof Error ? error.message : "Unknown error"}`)
     } finally {
+      // Reset export state
       setIsExporting(false)
+      setExportDeviceType(null)
     }
   }
 
@@ -303,7 +277,7 @@ export function EditorPanel({
             </div>
             <ChevronUp className="w-4 h-4" />
           </CollapsibleTrigger>
-          <CollapsibleContent className="p-4 border-b border-border">
+          <CollapsibleContent className="p-4 border-b border-border space-y-3">
             <div className="flex gap-2">
               <Button
                 variant={chatType === "dm" ? "default" : "outline"}
@@ -322,6 +296,70 @@ export function EditorPanel({
                 Group Chat
               </Button>
             </div>
+            {chatType === "group" && (
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Group Chat Name</Label>
+                  <Input
+                    value={groupChatName}
+                    onChange={(e) => setGroupChatName(e.target.value)}
+                    placeholder="Enter group name (e.g., Family, Work Team)"
+                    className="w-full"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Group Profile Image</Label>
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-12 w-12">
+                      {groupChatImage ? (
+                        <AvatarImage src={groupChatImage} alt="Group" />
+                      ) : (
+                        <AvatarFallback>
+                          <Users className="w-6 h-6" />
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => groupImageInputRef.current?.click()}
+                      >
+                        <Upload className="w-4 h-4 mr-2" />
+                        Upload
+                      </Button>
+                      {groupChatImage && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setGroupChatImage(null)}
+                        >
+                          <X className="w-4 h-4 mr-2" />
+                          Remove
+                        </Button>
+                      )}
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      ref={groupImageInputRef}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          const reader = new FileReader()
+                          reader.onload = (event) => {
+                            setGroupChatImage(event.target?.result as string)
+                          }
+                          reader.readAsDataURL(file)
+                        }
+                        e.target.value = ""
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </CollapsibleContent>
         </Collapsible>
 

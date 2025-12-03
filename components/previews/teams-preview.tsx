@@ -5,28 +5,52 @@ import { Video, Phone, MoreHorizontal, ChevronLeft, Paperclip, Smile, Send } fro
 
 interface TeamsPreviewProps {
   chatType: ChatType
+  groupChatName: string
+  groupChatImage: string | null
   participants: Participant[]
   messages: Message[]
 }
 
-export function TeamsPreview({ participants, messages }: TeamsPreviewProps) {
+export function TeamsPreview({ chatType, groupChatName, groupChatImage, participants, messages }: TeamsPreviewProps) {
   const other = participants.find((p) => p.id === "receiver")
+  const others = participants.filter((p) => p.id !== "sender")
 
   return (
     <div className="h-full flex flex-col bg-[#F5F5F5]">
       {/* Header - Teams style */}
       <div className="bg-[#464775] px-4 py-3 flex items-center gap-3">
         <ChevronLeft className="w-5 h-5 text-white" />
-        <div className="w-9 h-9 rounded-full bg-[#6264A7] flex items-center justify-center overflow-hidden">
-          {other?.avatar ? (
-            <img src={other.avatar || "/placeholder.svg"} alt="" className="w-full h-full object-cover" />
-          ) : (
-            <span className="text-white text-sm font-semibold">{other?.name?.[0]?.toUpperCase() || "?"}</span>
-          )}
-        </div>
-        <div className="flex-1">
-          <p className="font-semibold text-sm text-white">{other?.name || "User"}</p>
-          <p className="text-xs text-white/70">Available</p>
+        {chatType === "group" ? (
+          <div className="flex -space-x-1">
+            {others.slice(0, 2).map((p) => (
+              <div
+                key={p.id}
+                className="w-9 h-9 rounded-full bg-[#6264A7] flex items-center justify-center overflow-hidden border-2 border-[#464775]"
+              >
+                {p.avatar ? (
+                  <img src={p.avatar || "/placeholder.svg"} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-white text-sm font-semibold">{p.name?.[0]?.toUpperCase() || "?"}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="w-9 h-9 rounded-full bg-[#6264A7] flex items-center justify-center overflow-hidden">
+            {other?.avatar ? (
+              <img src={other.avatar || "/placeholder.svg"} alt="" className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-white text-sm font-semibold">{other?.name?.[0]?.toUpperCase() || "?"}</span>
+            )}
+          </div>
+        )}
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-sm text-white truncate">
+            {chatType === "group" ? (groupChatName || "Group Chat") : (other?.name || "User")}
+          </p>
+          <p className="text-xs text-white/70 truncate">
+            {chatType === "group" ? `${others.length} members` : "Available"}
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <Video className="w-5 h-5 text-white" />

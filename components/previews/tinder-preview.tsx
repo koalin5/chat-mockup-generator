@@ -4,6 +4,10 @@ import type { ChatType, Participant, Message } from "../chat-mockup-generator"
 import { Send } from "lucide-react"
 
 interface TinderPreviewProps {
+  groupChatName: string
+  groupChatImage: string | null
+  groupChatName: string
+  groupChatImage: string | null
   chatType: ChatType
   participants: Participant[]
   messages: Message[]
@@ -61,12 +65,9 @@ export function TinderPreview({ participants, messages }: TinderPreviewProps) {
       {/* Input */}
       <div className="p-4 border-t border-zinc-800">
         <div className="flex items-center gap-2">
-          <input
-            type="text"
-            placeholder="Type a message..."
-            className="flex-1 bg-zinc-800 text-white rounded-full px-4 py-3 text-sm placeholder:text-zinc-500 focus:outline-none"
-            readOnly
-          />
+          <div className="flex-1 bg-zinc-800 text-zinc-500 rounded-full px-4 py-3 text-sm">
+            Type a message...
+          </div>
           <button className="w-10 h-10 rounded-full bg-gradient-to-r from-orange-400 to-pink-500 flex items-center justify-center">
             <Send className="w-5 h-5 text-white" />
           </button>

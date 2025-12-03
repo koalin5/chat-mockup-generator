@@ -40,11 +40,15 @@ export type DeviceType = "iphone" | "android"
 export function ChatMockupGenerator() {
   const [platform, setPlatform] = useState<Platform>("tinder")
   const [chatType, setChatType] = useState<ChatType>("dm")
+  const [groupChatName, setGroupChatName] = useState<string>("")
+  const [groupChatImage, setGroupChatImage] = useState<string | null>(null)
   const [participants, setParticipants] = useState<Participant[]>([
     { id: "sender", name: "You", avatar: null },
     { id: "receiver", name: "", avatar: null },
   ])
   const [messages, setMessages] = useState<Message[]>([])
+  const [isExporting, setIsExporting] = useState(false)
+  const [exportDeviceType, setExportDeviceType] = useState<DeviceType | null>(null)
   const previewRef = useRef<HTMLDivElement>(null)
 
   const addMessage = (senderId: string, content: string) => {
@@ -143,6 +147,10 @@ export function ChatMockupGenerator() {
         setPlatform={setPlatform}
         chatType={chatType}
         setChatType={handleChatTypeChange}
+        groupChatName={groupChatName}
+        setGroupChatName={setGroupChatName}
+        groupChatImage={groupChatImage}
+        setGroupChatImage={setGroupChatImage}
         participants={participants}
         updateParticipant={updateParticipant}
         addParticipant={addParticipant}
@@ -153,13 +161,20 @@ export function ChatMockupGenerator() {
         deleteMessage={deleteMessage}
         reorderMessages={reorderMessages}
         updateMessageTimestamp={updateMessageTimestamp}
+        isExporting={isExporting}
+        setIsExporting={setIsExporting}
+        setExportDeviceType={setExportDeviceType}
         previewRef={previewRef}
       />
       <PreviewPanel
         platform={platform}
         chatType={chatType}
+        groupChatName={groupChatName}
+        groupChatImage={groupChatImage}
         participants={participants}
         messages={messages}
+        isExporting={isExporting}
+        exportDeviceType={exportDeviceType}
         previewRef={previewRef}
       />
     </div>

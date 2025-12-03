@@ -3,14 +3,17 @@ import { ChevronLeft, Video, Phone } from "lucide-react"
 
 interface IMessagePreviewProps {
   chatType: ChatType
+  groupChatName: string
+  groupChatImage: string | null
   participants: Participant[]
   messages: Message[]
+  isExporting?: boolean
 }
 
-export function IMessagePreview({ chatType, participants, messages }: IMessagePreviewProps) {
+export function IMessagePreview({ chatType, groupChatName, groupChatImage, participants, messages, isExporting = false }: IMessagePreviewProps) {
   const others = participants.filter((p) => p.id !== "sender")
   const headerName =
-    chatType === "group" ? others.map((p) => p.name || "Unknown").join(", ") || "Group" : others[0]?.name || "Contact"
+    chatType === "group" ? (groupChatName || "Group") : others[0]?.name || "Contact"
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
