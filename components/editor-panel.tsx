@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import {
   ChevronUp,
   MessageSquare,
@@ -115,6 +117,7 @@ export function EditorPanel({
   const [editingMessage, setEditingMessage] = useState<string | null>(null)
   const [editingContent, setEditingContent] = useState("")
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+  const [openTimestampPicker, setOpenTimestampPicker] = useState<string | null>(null)
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({})
   const groupImageInputRef = useRef<HTMLInputElement | null>(null)
 
@@ -513,23 +516,52 @@ export function EditorPanel({
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
                         <span className="font-medium truncate">{sender?.name || "Unknown"}</span>
-                        <button
-                          className="flex items-center gap-1 hover:text-foreground"
-                          onClick={() => {
-                            const input = document.createElement("input")
-                            input.type = "datetime-local"
-                            input.value = new Date(msg.timestamp.getTime() - msg.timestamp.getTimezoneOffset() * 60000)
-                              .toISOString()
-                              .slice(0, 16)
-                            input.onchange = () => {
-                              handleTimestampChange(msg.id, new Date(input.value))
-                            }
-                            input.click()
-                          }}
-                        >
-                          <Calendar className="w-3 h-3" />
-                          {msg.timestamp.toLocaleString()}
-                        </button>
+                        <Popover open={openTimestampPicker === msg.id} onOpenChange={(open) => setOpenTimestampPicker(open ? msg.id : null)}>
+                          <PopoverTrigger asChild>
+                            <button
+                              type="button"
+                              className="flex items-center gap-1 hover:text-foreground transition-colors cursor-pointer"
+                              title="Click to edit date/time"
+                            >
+                              <Calendar className="w-3 h-3" />
+                              <span className="text-xs">{msg.timestamp.toLocaleString()}</span>
+                            </button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="center">
+                            <div className="p-3 space-y-3">
+                              <CalendarComponent
+                                mode="single"
+                                selected={msg.timestamp}
+                                onSelect={(date) => {
+                                  if (date) {
+                                    const newDate = new Date(date)
+                                    newDate.setHours(msg.timestamp.getHours())
+                                    newDate.setMinutes(msg.timestamp.getMinutes())
+                                    newDate.setSeconds(msg.timestamp.getSeconds())
+                                    handleTimestampChange(msg.id, newDate)
+                                  }
+                                }}
+                                initialFocus
+                              />
+                              <div className="flex items-center gap-2 border-t pt-3">
+                                <Label htmlFor={`time-${msg.id}`} className="text-xs">Time:</Label>
+                                <Input
+                                  id={`time-${msg.id}`}
+                                  type="time"
+                                  className="h-8 text-xs"
+                                  value={`${String(msg.timestamp.getHours()).padStart(2, '0')}:${String(msg.timestamp.getMinutes()).padStart(2, '0')}`}
+                                  onChange={(e) => {
+                                    const [hours, minutes] = e.target.value.split(':').map(Number)
+                                    const newDate = new Date(msg.timestamp)
+                                    newDate.setHours(hours || 0)
+                                    newDate.setMinutes(minutes || 0)
+                                    handleTimestampChange(msg.id, newDate)
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                       {editingMessage === msg.id ? (
                         <div className="flex gap-2">

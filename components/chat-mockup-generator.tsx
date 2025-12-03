@@ -38,7 +38,7 @@ export interface Message {
 export type DeviceType = "iphone" | "android"
 
 export function ChatMockupGenerator() {
-  const [platform, setPlatform] = useState<Platform>("tinder")
+  const [platform, setPlatform] = useState<Platform>("imessage")
   const [chatType, setChatType] = useState<ChatType>("dm")
   const [groupChatName, setGroupChatName] = useState<string>("")
   const [groupChatImage, setGroupChatImage] = useState<string | null>(null)
@@ -106,7 +106,8 @@ export function ChatMockupGenerator() {
       const oldTimestamp = newMessages[messageIndex].timestamp
       newMessages[messageIndex] = { ...newMessages[messageIndex], timestamp: newTimestamp }
 
-      // If the new timestamp is earlier than the old one, adjust subsequent messages
+      // Handle conflicts: ensure chronological order
+      // If moved earlier, push subsequent messages forward
       if (newTimestamp < oldTimestamp) {
         for (let i = messageIndex + 1; i < newMessages.length; i++) {
           const prevMsgTime = newMessages[i - 1].timestamp
@@ -122,7 +123,43 @@ export function ChatMockupGenerator() {
             }
           }
         }
+      } else if (newTimestamp > oldTimestamp) {
+        // If moved later, push previous messages backward if needed
+        for (let i = messageIndex - 1; i >= 0; i--) {
+          const nextMsgTime = newMessages[i + 1].timestamp
+          const currentMsgTime = newMessages[i].timestamp
+
+          // If current message is after or equal to next, push it backward
+          if (currentMsgTime >= nextMsgTime) {
+            // Subtract 1-5 minutes randomly to make it look natural
+            const offsetMs = (Math.floor(Math.random() * 4) + 1) * 60 * 1000
+            const newTime = new Date(nextMsgTime.getTime() - offsetMs)
+            // Don't go before the previous message if it exists
+            if (i > 0 && newTime <= newMessages[i - 1].timestamp) {
+              newMessages[i] = {
+                ...newMessages[i],
+                timestamp: new Date(newMessages[i - 1].timestamp.getTime() + 60000), // 1 minute after previous
+              }
+            } else {
+              newMessages[i] = {
+                ...newMessages[i],
+                timestamp: newTime,
+              }
+            }
+          }
+        }
       }
+
+      // Sort messages by timestamp to ensure chronological order
+      // This handles any edge cases where messages might still be out of order
+      newMessages.sort((a, b) => {
+        const timeDiff = a.timestamp.getTime() - b.timestamp.getTime()
+        // If timestamps are equal (or very close), maintain original order as tiebreaker
+        if (Math.abs(timeDiff) < 1000) {
+          return prev.findIndex(m => m.id === a.id) - prev.findIndex(m => m.id === b.id)
+        }
+        return timeDiff
+      })
 
       return newMessages
     })

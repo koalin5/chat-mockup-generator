@@ -105,7 +105,7 @@ export function IPhoneStatusBar({ isDark = false }: { isDark?: boolean }) {
     >
       {/* Left: Time */}
       <div className="w-[80px] flex justify-start pl-1">
-        <span className="font-semibold text-[17px] tracking-[-0.01em] font-[SF Pro Text, -apple-system, BlinkMacSystemFont, sans-serif]">
+        <span className="font-semibold text-[15px] tracking-[-0.01em] font-[SF Pro Text, -apple-system, BlinkMacSystemFont, sans-serif]">
           9:41
         </span>
       </div>
