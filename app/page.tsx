@@ -1,9 +1,9 @@
-import { ChatMockupGenerator } from "@/components/chat-mockup-generator"
+import { Scripted } from "@/components/chat-mockup-generator"
 
 export default function Home() {
   return (
     <main className="h-screen overflow-hidden">
-      <ChatMockupGenerator />
+      <Scripted />
     </main>
   )
 }

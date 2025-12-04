@@ -4,11 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Next.js 16 application called "ChatForge" (also "Mockly") that generates realistic chat mockups for various messaging platforms. Users can create fake conversations with customizable participants, messages, and timestamps, then export them as images with device status bars.
+This is a Next.js 16 application called "Scripted" that generates realistic chat mockups for various messaging platforms. Users can create fake conversations with customizable participants, messages, and timestamps, then export them as images with device status bars.
 
 ## Commands
 
 ### Development
+
 ```bash
 npm run dev          # Start development server on localhost:3000
 npm run build        # Build production bundle
@@ -23,6 +24,7 @@ npm run lint         # Run ESLint
 The application follows a two-panel layout:
 
 1. **EditorPanel** (`components/editor-panel.tsx`) - Left sidebar containing:
+
    - Platform selector (14 platforms: iMessage, WhatsApp, Messenger, Instagram, Telegram, Signal, Slack, Teams, Snapchat, Tinder, X, Reddit, TikTok, WeChat)
    - Chat type selector (DM vs Group)
    - Participant management (avatars, names)
@@ -30,11 +32,12 @@ The application follows a two-panel layout:
    - Export functionality (iPhone/Android with status bars)
 
 2. **PreviewPanel** (`components/preview-panel.tsx`) - Right side preview:
+
    - Fixed 375x700px phone mockup with rounded corners
    - Dynamically renders platform-specific UI
    - Used as source for html2canvas export
 
-3. **ChatMockupGenerator** (`components/chat-mockup-generator.tsx`) - Root component:
+3. **Scripted** (`components/chat-mockup-generator.tsx`) - Root component:
    - Manages all state (platform, chatType, participants, messages)
    - Coordinates EditorPanel and PreviewPanel
    - Handles message CRUD operations and participant management
@@ -42,6 +45,7 @@ The application follows a two-panel layout:
 ### Platform Previews
 
 Each platform has a dedicated preview component in `components/previews/`:
+
 - `[platform]-preview.tsx` - Implements platform-specific UI styling
 - Each receives: `chatType`, `participants`, `messages` props
 - Responsible for rendering accurate chat interface (colors, fonts, layouts)
@@ -117,7 +121,8 @@ Message = {
 ### Export Customization
 
 Export logic in `editor-panel.tsx` `handleExport()`:
-- Status bar height: 44px * 2 (scale factor)
+
+- Status bar height: 44px \* 2 (scale factor)
 - Time display: hardcoded "9:41" (Apple's iconic time)
 - Device-specific elements: Dynamic Island for iPhone, camera punch-hole for Android
 - Background color determined by `isDarkPlatform` check

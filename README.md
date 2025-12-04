@@ -1,1 +1,1 @@
-# chat-mockup-generator
+# Scripted

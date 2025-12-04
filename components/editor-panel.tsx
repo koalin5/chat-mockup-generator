@@ -218,7 +218,7 @@ export function EditorPanel({
 
       // Download directly
       const link = document.createElement("a")
-      link.download = `chat-mockup-${platform}-${deviceType}.png`
+      link.download = `scripted-${platform}-${deviceType}.png`
       link.href = canvas.toDataURL("image/png")
       link.click()
     } catch (error) {
@@ -235,7 +235,7 @@ export function EditorPanel({
     <div className="w-full md:w-[400px] lg:w-[450px] border-r border-border bg-background flex flex-col h-screen overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-border flex-shrink-0">
-        <h1 className="text-xl font-bold">ChatForge</h1>
+        <h1 className="text-xl font-bold">Scripted</h1>
         <p className="text-sm text-muted-foreground">Create realistic chat mockups</p>
       </div>
 

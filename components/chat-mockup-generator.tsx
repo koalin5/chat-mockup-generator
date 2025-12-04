@@ -37,7 +37,7 @@ export interface Message {
 
 export type DeviceType = "iphone" | "android"
 
-export function ChatMockupGenerator() {
+export function Scripted() {
   const [platform, setPlatform] = useState<Platform>("imessage")
   const [chatType, setChatType] = useState<ChatType>("dm")
   const [groupChatName, setGroupChatName] = useState<string>("")
